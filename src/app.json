@@ -1,0 +1,38 @@
+{
+  "pages": [
+    "pages/my/main",
+    "pages/index/main",
+    "pages/create/main"
+
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#005752",
+    "navigationBarTitleText": "账号密码备忘录",
+    "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "color": "#999",
+    "backgroundColor": "#ffffff",
+    "selectedColor": "#005752",
+    "borderStyle": "white",
+
+    "list": [{
+      "text": "首页",
+      "pagePath": "pages/index/main",
+      "iconPath": "static/tabs/home.png",
+      "selectedIconPath": "static/tabs/home-active.png"
+    }, {
+      "text": "创建",
+      "pagePath": "pages/create/main",
+      "iconPath": "static/tabs/create.png",
+      "selectedIconPath": "static/tabs/create-active.png"
+    },{
+      "text": "个人",
+      "pagePath": "pages/my/main",
+      "iconPath": "static/tabs/my.png",
+      "selectedIconPath": "static/tabs/my-active.png"
+    }],
+    "position": "bottom"
+  }
+}
