@@ -36,7 +36,8 @@ export default {
   created() {
     this.imgName = ['口令设置','修改密保','邮箱设置','加密套餐','弃用小程序']
     this.imgUrl = ['command','questions','email','encryption','abandon'];
-    this.initMyItems();
+    // this.initMyItems();
+    this.myItems = this.initUrlMap();
   },
   methods: {
     initUrlMap(){
