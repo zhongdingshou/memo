@@ -9,13 +9,12 @@
       </div>
     </div>
     <div class="content">
-      <ul v-for="(itemArray,i) of myItems" :key="i" class="function-wrapper">
-        <li v-for="(item,j) in itemArray" :key="j" class="function-list">
+      <ul>
+        <li v-for="(item,index) in myItems" :key="index" class="function-list">
           <div class="list-wrapper">
             <img :src='item.url' class="icon" />
             <span class="text">{{item.name}}</span>
           </div>
-
         </li>
       </ul>
     </div>
@@ -95,31 +94,33 @@ export default {
         font-size: 18px
         color: white
     .content
-      background: white
-      .function-wrapper
-        display: flex
-        flex-wrap: wrap
-        justify-content: flex-start
-        border-bottom: 1px dashed #999
+      height: auto
+      min-height: 100%
+      background: #999
+      padding-bottom: 20%
+      .function-list
+        width: 100%
+        padding: 20px 15px
+        background: white
+        border-1px(#999)
+        &:first-child
+          border-none()
+          margin: 5px 0
         &:last-child
-          border: none
-        .function-list
-          flex: 0 0 33%
-          text-align: center
-          padding: 20px 0
-          &:last-child .list-wrapper
-            border:none
-          .list-wrapper
-            border-right: 1px dashed #999
-            .icon
-              margin: 0 auto
-              display: block
-              width: 24px
-              height: 24px
-            .text
-              line-height: 28px
-              font-size: 14px
-              color: black
+          border-none()
+        .list-wrapper
+          .icon
+            display: inline-block
+            vertical-align: text-top
+            width: 24px
+            height: 24px
+          .text
+            margin-left: 10px
+            line-height: 28px
+            font-size: 16px
+            color: black
+
+
 
 
 </style>
