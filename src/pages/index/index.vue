@@ -16,7 +16,7 @@
 export default {
   data() {
     return {
-      hasData:false,
+      hasData: false,
       items: []
     }
   },
@@ -82,6 +82,7 @@ export default {
       }
     },
     getSecret(){
+      var that = this;
       var token = mpvue.getStorageSync('token') || []
       if (token) {
         mpvue.request({
@@ -91,8 +92,8 @@ export default {
           },
           success(res) {
             if(res.data.status===1)
-              this.items =  res.data.data
-            console.log(res.data.data)
+              that.items =  res.data.data;
+            console.log(that.items);
           }
         })
       } else {
