@@ -1,9 +1,8 @@
 {
   "pages": [
-    "pages/my/main",
     "pages/index/main",
-    "pages/create/main"
-
+    "pages/create/main",
+    "pages/my/main"
   ],
   "window": {
     "backgroundTextStyle": "light",
