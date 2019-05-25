@@ -11,6 +11,7 @@
   import functions from '../../utils/functions.js'
   import cache from '../../utils/cache.js'
   import request from '../../utils/request.js'
+  import login from '../../utils/login.js'
 export default {
   data() {
     return{
@@ -20,6 +21,15 @@ export default {
   beforeMount() {
   },
   methods: {
+    async login(){
+      let code = await login.getCode()
+      let token = await cache.get('token')
+      let data = await request.post('/user/login', {code: code}, token)
+      if (data && data.status === 1) {
+        cache.put('token', data.token, 7200)
+        cache.put('is_set', data.is_set, 0)
+      }
+    },
     async checkCommand(data){
       let command = await data.mp.detail.value.command?await data.mp.detail.value.command:await data;
       if (functions.trim(command)&&parseFloat(command).toString() !== "NaN") {
