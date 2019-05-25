@@ -36,11 +36,11 @@ function login (){
     }
   });
 }
-function getCode(){
+function getCode(){//获取code
   return new Promise((resolve, reject)=>{
     mpvue.login({
       timeout:4000,
-      success: function (res) {
+      success(res) {
         if (res.code) {
           resolve(res.code)
         }

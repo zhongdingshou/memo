@@ -45,6 +45,7 @@
               setTimeout(mpvue.switchTab({
                 url: '../index/main'
               }), 3000)
+              clearTimeout()
             }
           } else {
             mpvue.showToast({

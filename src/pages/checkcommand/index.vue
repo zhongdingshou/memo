@@ -1,7 +1,7 @@
 <template>
   <div class="create">
     <form class='search-box' @submit='checkCommand'>
-      <input class="search-text" name="command" type="number"  placeholder="请输入口令..." maxlength="4" confirm-type="验证" @confirm="checkCommand" focus='true'>
+      <input class="search-text" name="command" type="number" :value="kouling"  placeholder="请输入口令..." maxlength="4" confirm-type="验证" @confirm="checkCommand" focus='true'>
       <button class="search-btn" form-type="submit">验证</button>
     </form>
   </div>
@@ -13,28 +13,38 @@
   import request from '../../utils/request.js'
 export default {
   data() {
-
+    return{
+      kouling:''
+    }
   },
   beforeMount() {
   },
   methods: {
     async checkCommand(data){
-      let command = await data.mp.detail.value.command
+      let command = await data.mp.detail.value.command?await data.mp.detail.value.command:await data;
       if (functions.trim(command)&&parseFloat(command).toString() !== "NaN") {
         let token = await cache.get('token')
-        let data = await request.post('/command/checkCommand', {command:command}, token)
-        if (data&&data.status===1){
-          let options = functions.getOptions()
-          this.goWhere(options.where,options)
+        if (token) {
+          let data = await request.post('/command/checkCommand', {command:command}, token)
+          if (data&&data.status===1){
+            let options = functions.getOptions()
+            this.goWhere(options.where,options)
+          } else {
+            this.kouling=''
+            mpvue.showToast({
+              title: data.msg,
+              icon: 'none',
+              duration: 1500,
+              mask: true
+            })
+          }
+          return true;
         } else {
-          mpvue.showToast({
-            title: data.msg,
-            icon: 'none',
-            duration: 1500,
-            mask: true
-          })
+          await this.login()
+          await this.checkCommand(command)
         }
       } else {
+        this.kouling=''
         mpvue.showToast({
           title: "口令为空或者不是数字，请检查",
           icon: 'none',

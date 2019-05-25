@@ -12,17 +12,17 @@ function post(postfix, data,token) {
         'Content-Type': 'application/json',
         'token':token
       }, // 设置请求的 header
-      success: function (res) {
+      success(res) {
         // success
         mpvue.hideLoading();
         resolve(res.data);
       },
-      fail: function (error) {
+      fail(error) {
         // fail
         mpvue.hideLoading();
         reject(error);
       },
-      complete: function () {
+      complete() {
         // complete
         mpvue.hideLoading();
       }
@@ -42,7 +42,7 @@ function get(postfix, data,token) {
         'Content-Type': 'application/json',
         'token':token
       }, // 设置请求的 header
-      success: function (res) {
+      success(res) {
         // success
         mpvue.hideLoading();
         if(res.statusCode!==200){
@@ -54,12 +54,12 @@ function get(postfix, data,token) {
         }
         resolve(res.data);
       },
-      fail: function (error) {
+      fail(error) {
         // fail
         mpvue.hideLoading();
         reject(error);//请求失败
       },
-      complete: function () {
+      complete() {
         mpvue.hideLoading();
         // complete
       }
