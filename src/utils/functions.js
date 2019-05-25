@@ -37,7 +37,7 @@ function getCurrentPageUrlWithArgs(){
   return urlWithArgs
 }
 
-function getOptions(){
+function getOptions(){//获取参数对象值
   let pages = getCurrentPages()    //获取加载的页面
   let currentPage = pages[pages.length-1]    //获取当前页面的对象
   let options = currentPage.options    //如果要获取url中所带的参数可以查看options

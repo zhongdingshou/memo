@@ -35,5 +35,9 @@
       "selectedIconPath": "static/tabs/my-active.png"
     }],
     "position": "bottom"
+  },
+  "networkTimeout": {
+    "request": 10000,
+    "downloadFile": 10000
   }
 }

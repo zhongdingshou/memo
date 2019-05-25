@@ -24,7 +24,7 @@
       let data = await request.post('/user/login', {code: code}, token)
       if (data && data.status === 1) {
         cache.put('token', data.token, 7200)
-        cache.put('is_set', data.is_set, 7200)
+        cache.put('is_set', data.is_set, 0)
       }
     },
     //及时更新小程序
