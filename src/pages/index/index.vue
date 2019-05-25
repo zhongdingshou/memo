@@ -52,7 +52,8 @@ export default {
       inputShowed: false,
       inputVal: "",
       hasData: false,
-      items: {}
+      items: {},
+      is_search:false
     }
   },
   beforeMount() {
@@ -77,6 +78,9 @@ export default {
       })
     } else {
       // 下一页
+      if (this.is_search){
+        return
+      }
       this.page = this.page + 1
       this.getSecret()
     }
@@ -126,6 +130,7 @@ export default {
               mask:true
             })
           }
+          this.is_search = true
           return true
         } else {
           await this.login()
@@ -159,6 +164,7 @@ export default {
       if (token) {
         let data = await request.get('/secret/getSecret',{page:this.page},token)
         mpvue.stopPullDownRefresh()
+        this.is_search = false
         if (data&&data.status===1){
           if (this.page === 1) {
             // 数据
