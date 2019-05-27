@@ -58,8 +58,9 @@ export default {
   },
   beforeMount() {
     this.operateUserInfo();
-    if(cache.get('token'))
-      this.getSecret();
+    this.canGetSecret();
+  },
+  onShow(){
   },
 // 下拉刷新
   onPullDownRefresh () {
@@ -86,6 +87,18 @@ export default {
     }
   },
   methods:{
+    canGetSecret(){
+      let that = this
+      mpvue.getSetting({
+        success(res) {
+          if (res.authSetting['scope.userInfo']) {
+            that.getSecret();
+          } else {
+            that.hasData=false
+          }
+        }
+      })
+    },
     //查看详细信息
     async lookSacret(id){
       if (parseFloat(id).toString() !== "NaN"){
@@ -122,7 +135,7 @@ export default {
           if (data&&data.status===1)
             this.items =  data.data;
           else{
-            this.items =  []
+            this.items =  {}
             mpvue.showToast({
               title: data.msg,
               icon: 'none',
@@ -133,8 +146,7 @@ export default {
           this.is_search = true
           return true
         } else {
-          await this.login()
-          await this.searchSacret()
+          this.login().then(this.searchSacret())
         }
       } else {
         this.page = 1
@@ -143,19 +155,21 @@ export default {
     },
 
     async login(){
-      let code = await login.getCode()
       let token = await cache.get('token')
-      let data = await request.post('/user/login', {code: code}, token)
-      if (data && data.status === 1) {
-        cache.put('token', data.token, 7200)
-        cache.put('is_set', data.is_set, 0)
+      if (!token) {
+        let code = await login.getCode()
+        let data = await request.post('/user/login', {code: code}, token)
+        if (data && data.status === 1) {
+          cache.put('token', data.token, 7200)
+          cache.put('is_set', data.is_set, 0)
+        }
       }
     },
 
     async getUserInfo(data){
       if (data.mp.detail.rawData){
-        await this.operateUserInfo();
-        this.getSecret()
+        await this.operateUserInfo()
+        await this.getSecret()
       }
     },
 
@@ -168,7 +182,7 @@ export default {
         if (data&&data.status===1){
           if (this.page === 1) {
             // 数据
-            this.items = await data.data;
+            this.items = data.data;
           } else {
             // 数据追加
             for (let i = 0;i<data.data.length;i++){
@@ -176,7 +190,7 @@ export default {
             }
           }
           // 总页数
-          this.total_page = await data.total_page
+          this.total_page = data.total_page
         }
         else{
           mpvue.showToast({
@@ -187,10 +201,8 @@ export default {
           })
         }
         return true
-      }
-      else {
-        await this.login()
-        await this.getSecret()
+      } else {
+        this.login().then(this.getSecret())
       }
     },
     showInput() {
