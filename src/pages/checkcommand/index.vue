@@ -22,12 +22,14 @@ export default {
   },
   methods: {
     async login(){
-      let code = await login.getCode()
       let token = await cache.get('token')
-      let data = await request.post('/user/login', {code: code}, token)
-      if (data && data.status === 1) {
-        cache.put('token', data.token, 7200)
-        cache.put('is_set', data.is_set, 0)
+      if (!token) {
+        let code = await login.getCode()
+        let data = await request.post('/user/login', {code: code}, token)
+        if (data && data.status === 1) {
+          cache.put('token', data.token, 7200)
+          cache.put('is_set', data.is_set, 0)
+        }
       }
     },
     async checkCommand(data){
@@ -50,8 +52,7 @@ export default {
           }
           return true;
         } else {
-          await this.login()
-          await this.checkCommand(command)
+          this.login().then(this.checkCommand(command))
         }
       } else {
         this.kouling=''
