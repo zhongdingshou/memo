@@ -1,9 +1,10 @@
 {
   "pages": [
-    "pages/my/main",
     "pages/index/main",
-    "pages/create/main"
-
+    "pages/create/main",
+    "pages/my/main",
+    "pages/detail/main",
+    "pages/checkcommand/main"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -34,5 +35,9 @@
       "selectedIconPath": "static/tabs/my-active.png"
     }],
     "position": "bottom"
+  },
+  "networkTimeout": {
+    "request": 10000,
+    "downloadFile": 10000
   }
 }
