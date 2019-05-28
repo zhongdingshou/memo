@@ -9,14 +9,27 @@
       </div>
     </div>
     <div class="content">
-      <ul>
+      <div class="weui-cells" >
+        <div class="weui-cell" v-for="(item,index) in myItems" :key="index">
+          <div class="weui-cell__hd">
+            <span :class="item.class"></span>
+          </div>
+          <div class="weui-cell__bd">
+            <p class="text">{{item.name}}</p>
+          </div>
+          <div class="weui-cell__ft">
+            <span class="icon icon-keyboard_arrow_right"></span>
+          </div>
+        </div>
+      </div>
+      <!-- <ul>
         <li v-for="(item,index) in myItems" :key="index" class="function-list">
           <div class="list-wrapper">
             <img :src='item.url' class="icon" />
             <span class="text">{{item.name}}</span>
           </div>
         </li>
-      </ul>
+      </ul> -->
     </div>
   </div>
 </template>
@@ -33,40 +46,24 @@ export default {
     card
   },
   created() {
-    this.imgName = ['口令设置','修改密保','邮箱设置','加密套餐','弃用小程序']
-    this.imgUrl = ['command','questions','email','encryption','abandon'];
-    // this.initMyItems();
-    this.myItems = this.initUrlMap();
+    this.iconName = ['口令设置','修改密保','邮箱设置','加密套餐','弃用小程序'];
+    this.iconClass = ['icon-command','icon-file-text2','icon-mail','icon-encryption','icon-abandon'];
+    this.iconType = ['command','questions','mail','encryption','abandon'];
+    this.myItems = this.initIconMap();
   },
   methods: {
-    initUrlMap(){
+    initIconMap(){
       var arr = [];
-      for(var i = 0;i<this.imgUrl.length;i++){
-        var temp = this.imgUrl[i];
-        this.imgUrl[i] = "/static/images/"+temp+".png";
-        var urlMap = {url:'',name:''};
-        urlMap.url = this.imgUrl[i];
-        urlMap.name = this.imgName[i];
-        arr.push(urlMap);
+      for(var i = 0;i<this.iconName.length;i++){
+        var temp = this.iconClass[i];
+        this.iconClass[i] = "icon "+temp;
+        var iconMap = {class:'',name:'',type:''};
+        iconMap.class = this.iconClass[i];
+        iconMap.name = this.iconName[i];
+        iconMap.type = temp;
+        arr.push(iconMap);
       }
       return arr;
-    },
-    initMyItems(){
-      var arr = this.initUrlMap();
-      var functionList = [];
-      //将功能列表分为3组
-      const colCount = 3;
-      var index = 0;
-      for(var i = 0; i< arr.length;i++){
-        var index = parseInt(i/colCount);
-        if(functionList.length<=index){
-          functionList.push([]);
-          functionList[index].push(arr[i]);
-        }else{
-          functionList[index].push(arr[i]);
-        }
-      }
-      this.myItems = functionList;
     }
   }
 
@@ -97,30 +94,15 @@ export default {
       height: auto
       min-height: 100%
       background: #999
-      padding-bottom: 20%
-      .function-list
-        width: 100%
-        padding: 20px 15px
-        background: white
-        border-1px(#999)
-        &:first-child
-          border-none()
-          margin: 5px 0
-        &:last-child
-          border-none()
-        .list-wrapper
-          .icon
-            display: inline-block
-            vertical-align: text-top
-            width: 24px
-            height: 24px
-          .text
-            margin-left: 10px
-            line-height: 28px
-            font-size: 16px
-            color: black
-
-
-
-
+      .weui-cells
+        margin-top: 0
+      .icon
+        width: 16px
+        height: 16px
+        color: #005752
+      .text
+        margin-left: 10px
+        line-height: 28px
+        font-size: 16px
+        color: black
 </style>
