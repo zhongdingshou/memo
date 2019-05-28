@@ -22,28 +22,16 @@
           </div>
         </div>
       </div>
-      <!-- <ul>
-        <li v-for="(item,index) in myItems" :key="index" class="function-list">
-          <div class="list-wrapper">
-            <img :src='item.url' class="icon" />
-            <span class="text">{{item.name}}</span>
-          </div>
-        </li>
-      </ul> -->
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-import card from 'components/card.vue';
 export default {
   data() {
     return {
       myItems: []
     }
-  },
-  components: {
-    card
   },
   created() {
     this.iconName = ['口令设置','修改密保','邮箱设置','加密套餐','弃用小程序'];
