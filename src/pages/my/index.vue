@@ -10,7 +10,7 @@
     </div>
     <div class="content">
       <div class="weui-cells" >
-        <div class="weui-cell" v-for="(item,index) in myItems" :key="index">
+        <div class="weui-cell" v-for="(item,index) in myItems" :key="index" @click="functionsClick(item.type)">
           <div class="weui-cell__hd">
             <span :class="item.class"></span>
           </div>
@@ -22,28 +22,17 @@
           </div>
         </div>
       </div>
-      <!-- <ul>
-        <li v-for="(item,index) in myItems" :key="index" class="function-list">
-          <div class="list-wrapper">
-            <img :src='item.url' class="icon" />
-            <span class="text">{{item.name}}</span>
-          </div>
-        </li>
-      </ul> -->
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-import card from 'components/card.vue';
+import funlist from '../../utils/funlist.js';
 export default {
   data() {
     return {
       myItems: []
     }
-  },
-  components: {
-    card
   },
   created() {
     this.iconName = ['口令设置','修改密保','邮箱设置','加密套餐','弃用小程序'];
@@ -55,16 +44,19 @@ export default {
     initIconMap(){
       var arr = [];
       for(var i = 0;i<this.iconName.length;i++){
-        var temp = this.iconClass[i];
-        this.iconClass[i] = "icon "+temp;
+        this.iconClass[i] = "icon "+this.iconClass[i];
         var iconMap = {class:'',name:'',type:''};
         iconMap.class = this.iconClass[i];
         iconMap.name = this.iconName[i];
-        iconMap.type = temp;
+        iconMap.type = this.iconType[i];
         arr.push(iconMap);
       }
       return arr;
+    },
+    functionsClick(functionsType){
+      funlist.achieveFunctions(functionsType);
     }
+
   }
 
 
