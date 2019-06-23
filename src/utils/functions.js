@@ -48,5 +48,5 @@ module.exports = {
   trim: trim,
   getCurrentPageUrl: getCurrentPageUrl,
   getCurrentPageUrlWithArgs: getCurrentPageUrlWithArgs,
-  getOptions:getOptions
+  getOptions:getOptions,
 }
