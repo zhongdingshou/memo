@@ -22,7 +22,7 @@
           <div class="weui-cells weui-cells_after-title">
             <scroll-view scroll-y>
               <li v-for="item in items" :key="item.id" @click="lookSacret(item.id)" class="weui-cell weui-cell_access bgcolor" hover-class="weui-cell_active" >
-                <div class="weui-cell__bd" >{{item.describe}}</div>
+                <div class="weui-cell__bd">{{item.describe}}</div>
                 <div class="weui-cell__ft weui-cell__ft_in-access"></div>
               </li>
             </scroll-view>
@@ -53,8 +53,7 @@ export default {
       inputVal: "",
       hasData: false,
       items: {},
-      is_search:false,
-      color:[]
+      is_search:false
     }
   },
   beforeMount() {
