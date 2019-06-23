@@ -1,7 +1,7 @@
 let config = require('./config.js')
 function post(postfix, data,token) {
   mpvue.showLoading({
-    title: '加载中',
+    title: '玩命加载中...',
   })
   return new Promise((resolve, reject) => {
     mpvue.request({
@@ -47,7 +47,7 @@ function get(postfix, data,token) {
         mpvue.hideLoading();
         if(res.statusCode!==200){
           mpvue.showToast({
-            title: "网络出错，稍后再试",
+            title:  "网络出错-_-，稍后再试",
             icon: "none"
           });
           return false;
