@@ -11,8 +11,8 @@
             </div>
           </div>
           <label class="weui-search-bar__label" :hidden="inputShowed" @click="showInput">
-            <icon class="weui-icon-search" type="search" size="14"></icon>
-            <div class="weui-search-bar__text mind">搜索...</div>
+            <icon class="weui-icon-search" type="search" size="14" style="vertical-align: top"></icon>
+            <div class="weui-search-bar__text mind" style="vertical-align: top;font-size:15px;">搜索...</div>
           </label>
         </div>
         <div class="weui-search-bar__cancel-btn" :hidden="!inputShowed" @click="hideInput">取消</div>
@@ -20,8 +20,8 @@
       <div v-if="items.length>0">
         <div class="list">
           <div class="weui-cells weui-cells_after-title">
-            <scroll-view scroll-y >
-              <li v-for="item in items" :key="item.id" @click="lookSacret(item.id)" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+            <scroll-view scroll-y>
+              <li v-for="item in items" :key="item.id" @click="lookSacret(item.id)" class="weui-cell weui-cell_access bgcolor" hover-class="weui-cell_active" >
                 <div class="weui-cell__bd">{{item.describe}}</div>
                 <div class="weui-cell__ft weui-cell__ft_in-access"></div>
               </li>
@@ -80,7 +80,7 @@ export default {
     } else {
       // 下一页
       if (this.is_search){
-        return
+        return true
       }
       this.page = this.page + 1
       this.getSecret()
@@ -146,7 +146,8 @@ export default {
           this.is_search = true
           return true
         } else {
-          this.login().then(this.searchSacret())
+          await this.login()
+          this.searchSacret()
         }
       } else {
         this.page = 1
@@ -168,8 +169,8 @@ export default {
 
     async getUserInfo(data){
       if (data.mp.detail.rawData){
-        await this.operateUserInfo()
-        await this.getSecret()
+        this.operateUserInfo()
+        this.getSecret()
       }
     },
 
@@ -202,7 +203,8 @@ export default {
         }
         return true
       } else {
-        this.login().then(this.getSecret())
+        await this.login()
+        this.getSecret()
       }
     },
     showInput() {
@@ -225,7 +227,13 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-
-
+  .bgcolor:nth-child(2n+1)
+  {
+    background:#fff;
+  }
+  .bgcolor:nth-child(2n)
+  {
+    background:#EFEFF4;
+  }
 
 </style>
