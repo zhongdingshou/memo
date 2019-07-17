@@ -59,7 +59,11 @@ export default {
         this.alreadySet=true
       }
     }
-
+  },
+  onShow(){
+    if(functions.checkSet(cache.get('is_set'),3)){
+      this.alreadySet=true
+    }
   },
   methods: {
     async successOut(callback) {

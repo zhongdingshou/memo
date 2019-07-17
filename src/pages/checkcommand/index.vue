@@ -81,6 +81,9 @@ export default {
           }
           request.post('/command/checkCommand', {command:base64.encode(sensitivedata.Encrypt(command,token))}, token).then((data)=>{
             if (data&&data.status===1){
+              if (cache.get('can_command')==='1') {
+                cache.remove('can_command');
+              }
               let options = functions.getOptions();
               this.goWhere(options.where,options)
             } else {
