@@ -166,9 +166,9 @@ export default {
       width 92%
       .jiami-item{
         display inline-block
-        height 112rpx
+        position: relative;
         background: #ffffff;
-        padding 0 20rpx
+        padding 20rpx 20rpx
         margin 20rpx 20rpx 10rpx 20rpx
         border-radius 24rpx
         color #0B110C
@@ -176,12 +176,18 @@ export default {
       }
       .detail{
         display inline
-        line-height 112rpx
+        line-height 60rpx
       }
       .icon-add_circle{
         display inline-block
+        position absolute
+        top -20rpx
+        right -20rpx
+        width 48rpx
+        height 48rpx
         margin-left 28rpx
-        color #7e8c8d
+        color #005752
+        font-size 46rpx
       }
       .remain {
         width 95%
@@ -201,9 +207,8 @@ export default {
         .list{
           position: relative;
           display inline-block
-          height 112rpx
           background: #EFEFF4;
-          padding 0 20rpx
+          padding 20rpx 20rpx
           margin 20rpx 20rpx 10rpx 20rpx
           border-radius 24rpx
           boeder 2rpx solid #005752
@@ -212,7 +217,7 @@ export default {
         }
         .matter {
           display inline
-          line-height 112rpx
+          line-height 60rpx
           margin-right 10rpx
         }
         .del {
