@@ -9,7 +9,7 @@
     },
     methods:{
       getSetting(){
-        let that = this
+        let that = this;
         mpvue.getSetting({
           success(res) {
             if (res.authSetting['scope.userInfo']) {
@@ -19,17 +19,17 @@
         })
       },
       async login(){
-        let code = await login.getCode()
-        let token = await cache.get('token','')
-        let data = await request.post('/user/login', {code: code}, token)
+        let code = await login.getCode();
+        let token = await cache.get('token','');
+        let data = await request.post('/user/login', {code: code}, token);
         if (data && data.status === 1) {
-          cache.put('token', data.token, 7200)
+          cache.put('token', data.token, 7200);
           cache.put('is_set', data.is_set, 0)
         }
       },
       //及时更新小程序
       memoUpdate() {
-        const updateManager = mpvue.getUpdateManager()
+        const updateManager = mpvue.getUpdateManager();
 
         updateManager.onCheckForUpdate(function (res) {
           // 请求完新版本信息的回调
@@ -47,41 +47,13 @@
               })
             })
           }
+        });
+        updateManager.onUpdateFailed(function () {
+          // 新版本下载失败
+          console.log('新版本下载失败')
         })
-
-        // updateManager.onUpdateFailed(function () {
-        //   // 新版本下载失败
-        //   console.log('新版本下载失败')
-        // })
       }
   },
-  // created () {
-  //   // 调用API从本地缓存中获取数据
-  //   /*
-  //    * 平台 api 差异的处理方式:  api 方法统一挂载到 mpvue 名称空间, 平台判断通过 mpvuePlatform 特征字符串
-  //    * 微信：mpvue === wx, mpvuePlatform === 'wx'
-  //    * 头条：mpvue === tt, mpvuePlatform === 'tt'
-  //    * 百度：mpvue === swan, mpvuePlatform === 'swan'
-  //    * 支付宝(蚂蚁)：mpvue === my, mpvuePlatform === 'my'
-  //    */
-  //
-  //   let logs
-  //   if (mpvuePlatform === 'my') {
-  //     logs = mpvue.getStorageSync({key: 'logs'}).data || []
-  //     logs.unshift(Date.now())
-  //     mpvue.setStorageSync({
-  //       key: 'logs',
-  //       data: logs
-  //     })
-  //   } else {
-  //     logs = mpvue.getStorageSync('logs') || []
-  //     logs.unshift(Date.now())
-  //     mpvue.setStorageSync('logs', logs)
-  //   }
-  // },
-  // log () {
-  //   console.log(`log at:${Date.now()}`)
-  // }
 }
 </script>
 

@@ -5,7 +5,7 @@
         <open-data type="userAvatarUrl" ></open-data>
       </div>
       <div class="text">
-        <open-data type="userNickName" ></open-data>
+        你好，“<open-data type="userNickName" ></open-data>”
       </div>
     </div>
     <div class="content">
@@ -28,24 +28,37 @@
 
 <script type="text/ecmascript-6">
 import funlist from '../../utils/funlist.js';
+import functions from '../../utils/functions.js'
+import cache from '../../utils/cache.js'
 export default {
   data() {
     return {
       myItems: []
     }
   },
-  created() {
-    this.iconName = ['口令设置','修改密保','邮箱设置','加密套餐','弃用小程序'];
-    this.iconClass = ['icon-command','icon-file-text2','icon-mail','icon-encryption','icon-abandon'];
-    this.iconType = ['command','questions','mail','encryption','abandon'];
+  onShow(){
+    mpvue.getSetting({
+      success(res) {
+        if (!res.authSetting['scope.userInfo']) {
+          mpvue.switchTab({
+            url: '../index/main'
+          })
+        }
+      }
+    })
+  },
+  onLoad() {
+    this.iconName = ['口令设置','修改密保','邮箱设置','加密套餐','弃用小程序','关于'];
+    this.iconClass = ['icon-command','icon-file-text2','icon-mail','icon-encryption','icon-abandon','icon-file-text2'];
+    this.iconType = ['command','questions','mail','encryption','abandon','about'];
     this.myItems = this.initIconMap();
   },
   methods: {
     initIconMap(){
-      var arr = [];
-      for(var i = 0;i<this.iconName.length;i++){
+      let arr = [];
+      for(let i = 0;i<this.iconName.length;i++){
         this.iconClass[i] = "icon "+this.iconClass[i];
-        var iconMap = {class:'',name:'',type:''};
+        let iconMap = {class:'',name:'',type:''};
         iconMap.class = this.iconClass[i];
         iconMap.name = this.iconName[i];
         iconMap.type = this.iconType[i];
@@ -54,7 +67,14 @@ export default {
       return arr;
     },
     functionsClick(functionsType){
-      funlist.achieveFunctions(functionsType);
+      if(functions.checkSet(cache.get('is_set'),1)){
+        if (functionsType==='command'||functionsType==='encryption'){
+          mpvue.navigateTo({
+            url:"../checkcommand/main?where="+ functionsType
+          });
+          return true;
+        }
+      } funlist.achieveFunctions(functionsType);
     }
 
   }
@@ -65,8 +85,11 @@ export default {
 
 <style lang="stylus" rel="stylesheet/stylus">
   @import "../../common/stylus/mixin.styl";
+  page{
+    background: #EFEFF4
+  }
   .my
-    background: #999
+    background: #EFEFF4
     .information-wrapper
       width: 100%
       background: #005752
@@ -74,8 +97,8 @@ export default {
       text-align: center
       .avatar
         margin: 0 auto
-        width: 64px
-        height: 64px
+        width: 100px
+        height: 100px
         border-radius: 50%
         overflow: hidden
       .text
@@ -88,13 +111,17 @@ export default {
       background: #999
       .weui-cells
         margin-top: 0
-      .icon
-        width: 16px
-        height: 16px
-        color: #005752
-      .text
-        margin-left: 10px
-        line-height: 28px
-        font-size: 16px
-        color: black
+        .weui-cell:hover{
+          background: #EFEFF4
+        }
+        .weui-cell  
+          .icon
+            width: 16px
+            height: 16px
+            color: #005752
+          .text
+            margin-left:22rpx;
+            line-height:66rpx;
+            font-size:36rpx;
+            color: black
 </style>
