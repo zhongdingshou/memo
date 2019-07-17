@@ -66,6 +66,13 @@ export default {
     this.time = '获取验证码';
   },
   methods: {
+    async successOut(callback) {
+      mpvue.switchTab({
+        url: '../my/main'
+      });
+      let time = setTimeout(callback(), 1500);
+      clearTimeout(time)
+    },
     async login(){
       let token = await cache.get('token');
       if (!token) {
@@ -182,25 +189,25 @@ export default {
       if (verification.length === 6&&!isNaN(verification)) {
         let token = await cache.get('token');
         if (token) {
-          let data = await request.post('/email/checkEmail', {verify:base64.encode(sensitivedata.Encrypt(verification,token))}, token);
-          await mpvue.showToast({
-            title: data.msg,
-            icon: 'none',
-            duration: 2000,
-            mask: true
-          });
-          if (data&&data.status===1){
-            await cache.put('is_set',functions.addSet(cache.get('is_set'),4),0);
-            mpvue.switchTab({
-              url: '../my/main'
-            })
-          } else if(data.status===2) {
-            if (!this.isChange) {
-              await mpvue.redirectTo({
-                url:"../command/main?can=yes"
-              })
+          await request.post('/email/checkEmail', {verify:base64.encode(sensitivedata.Encrypt(verification,token))}, token).then((data)=>{
+            if (data&&data.status===1){
+              cache.put('is_set',functions.addSet(cache.get('is_set'),4),0);
+              this.successOut(()=>{
+                mpvue.showToast({
+                  title: data.msg,
+                  icon: 'none',
+                  duration: 1500,
+                  mask: true
+                });
+              });
+            } else if(data.status===2) {
+              if (!this.isChange) {
+                mpvue.redirectTo({
+                  url:"../command/main?can=yes"
+                })
+              }
             }
-          }
+          });
           return true;
         } else {
           this.login().then(this.checkMail(data))

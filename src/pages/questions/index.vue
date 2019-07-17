@@ -62,6 +62,13 @@ export default {
 
   },
   methods: {
+    async successOut(callback) {
+      mpvue.switchTab({
+        url: '../my/main'
+      });
+      let time = setTimeout(callback(), 1500);
+      clearTimeout(time)
+    },
     async isReset(){
       if(this.canClick2){
         this.canClick2 = false
@@ -150,16 +157,22 @@ export default {
         let data = await request.post('/encrypted/newEncrypted', {problem:problem,answer:answer}, token);
         if (data&&data.status===1){
           await cache.put('is_set',functions.addSet(cache.get('is_set'),3),0);
-          mpvue.switchTab({
-            url: '../my/main'
-          })
+          this.successOut(()=>{
+            mpvue.showToast({
+              title: data.msg,
+              icon: 'none',
+              duration: 1500,
+              mask: true
+            });
+          });
+        } else {
+          await mpvue.showToast({
+            title: data.msg,
+            icon: 'none',
+            duration: 2000,
+            mask: true
+          });
         }
-        await mpvue.showToast({
-          title: data.msg,
-          icon: 'none',
-          duration: 2000,
-          mask: true
-        });
         return true;
       } else {
         this.login().then(this.newEncrypted(data))

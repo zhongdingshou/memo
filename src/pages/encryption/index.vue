@@ -42,6 +42,13 @@ export default {
     this.checkItem.length=0
   },
   methods: {
+    async successOut(callback) {
+      mpvue.switchTab({
+        url: '../my/main'
+      });
+      let time = setTimeout(callback(), 1500);
+      clearTimeout(time)
+    },
     async login(){
       let token = await cache.get('token');
       if (!token) {
@@ -123,16 +130,22 @@ export default {
       let token = await cache.get('token');
       if(token){
         await request.post('/encryption/newPackage', {package:base64.encode(sensitivedata.Encrypt(combo,token))}, token).then((data)=>{
-          mpvue.showToast({
-            title: data.msg,
-            icon: 'none',
-            duration: 1500,
-            mask: true
-          });
           if (data&&data.status===1){
             cache.put('is_set',functions.addSet(cache.get('is_set'),2),0);
-            mpvue.switchTab({
-              url: '../my/main'
+            this.successOut(()=>{
+              mpvue.showToast({
+                title: data.msg,
+                icon: 'none',
+                duration: 1500,
+                mask: true
+              });
+            });
+          } else {
+            mpvue.showToast({
+              title: data.msg,
+              icon: 'none',
+              duration: 1500,
+              mask: true
             });
           }
         });

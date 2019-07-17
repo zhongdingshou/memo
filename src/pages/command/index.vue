@@ -34,6 +34,13 @@ export default {
     }
   },
   methods: {
+    async successOut(callback) {
+      mpvue.switchTab({
+        url: '../my/main'
+      });
+      let time = setTimeout(callback(), 1500);
+      clearTimeout(time)
+    },
     async login(){
       let token = await cache.get('token');
       if (!token) {
@@ -59,17 +66,23 @@ export default {
         let token = await cache.get('token');
         if (token) {
           let data = await request.post('/command/newCommand', {command:base64.encode(sensitivedata.Encrypt(command,token))}, token);
-          await mpvue.showToast({
-            title: data.msg,
-            icon: 'none',
-            duration: 1500,
-            mask: true
-          });
           if (data&&data.status===1){
             await cache.remove('can_command');
             await cache.put('is_set',functions.addSet(cache.get('is_set'),1),0);
-            mpvue.switchTab({
-              url: '../my/main'
+            this.successOut(()=>{
+              mpvue.showToast({
+                title: data.msg,
+                icon: 'none',
+                duration: 1500,
+                mask: true
+              });
+            });
+          } else {
+            await mpvue.showToast({
+              title: data.msg,
+              icon: 'none',
+              duration: 1500,
+              mask: true
             });
           }
           return true;

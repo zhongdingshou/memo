@@ -36,6 +36,13 @@
         this.getDetail(options.id)
       },
       methods: {
+        async successOut(callback) {
+          mpvue.switchTab({
+            url: '../index/main'
+          });
+          let time = setTimeout(callback(), 1500);
+          clearTimeout(time)
+        },
         async login(){
           let token = await cache.get('token');
           if (!token) {
@@ -70,15 +77,15 @@
               confirmColor:'#FD112D',
               success: function (res) {
                 if (res.confirm) {
-                  let data = request.post('/secret/delSecret', {id:sensitivedata.Decrypt(id)}, token);
-                  mpvue.showToast({
-                    title: data.msg,
-                    icon: 'none',
-                    duration: 1500,
-                    mask: true
-                  });
-                  mpvue.switchTab({
-                    url: '../index/main'
+                  request.post('/secret/delSecret', {id:sensitivedata.Decrypt(id)}, token).then((data)=>{
+                    this.successOut(()=>{
+                      mpvue.showToast({
+                        title: data.msg,
+                        icon: 'none',
+                        duration: 1500,
+                        mask: true
+                      });
+                    });
                   })
                 }
               }
