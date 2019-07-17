@@ -66,6 +66,7 @@ export default {
             mask: true
           });
           if (data&&data.status===1){
+            await cache.remove('can_command');
             await cache.put('is_set',functions.addSet(cache.get('is_set'),1),0);
             mpvue.switchTab({
               url: '../my/main'
