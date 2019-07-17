@@ -128,6 +128,10 @@ export default {
         });
       }
       let token = await cache.get('token');
+      if (!token) {
+        await this.login();
+        token = await cache.get('token');
+      }
       if(token){
         await request.post('/encryption/newPackage', {package:base64.encode(sensitivedata.Encrypt(combo,token))}, token).then((data)=>{
           if (data&&data.status===1){
