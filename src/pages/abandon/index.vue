@@ -1,68 +1,98 @@
 <template>
   <div class="create">
-    <form class='box' @submit='checkCommand'>
+    <div v-if="baibai">
+      <navigator class="btn-close" hover-class="navigator-hover" open-type="exit" target="miniProgram" @click="quitApplet()">弃用</navigator >
+    </div>
+    <div v-else>
+      <form class='box' @submit='checkCommand'>
       <input class="text" name="command" type="number" focus :value="kouling"  placeholder="请输入口令..." maxlength="4" confirm-type="验证" @confirm="checkCommand" focus='true'>
-      <button class="btn" form-type="submit">验证</button>
+      <button class="btn" form-type="submit" >验证</button>
     </form>
+    </div>
+
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import functions from '../../utils/functions.js'
   import cache from '../../utils/cache.js'
-  import sensitivedata from '../../utils/sensitivedata.js'
   import request from '../../utils/request.js'
   import login from '../../utils/login.js'
   import base64 from '../../utils/base64.js'
+  import sensitivedata from '../../utils/sensitivedata.js'
 export default {
   data() {
     return{
       kouling:'',
-      canClick:true
+      baibai:false,
+      canClick1:true,
+      canClick2:true
     }
   },
-  beforeMount() {
+  onUnload() {
+    if (this.baibai) {
+      this.quitApplet()
+    }
+  },
+  onShow() {
+    if (!functions.checkSet(cache.get('is_set'),1)) {
+      this.baibai = true
+    } else {
+      this.baibai = false
+    }
   },
   methods: {
     async login(){
       let token = await cache.get('token');
       if (!token) {
         let code = await login.getCode();
-        await request.post('/user/login', {code: code}, token).then((resolve)=>{
-          if (resolve && resolve.status === 1) {
-            cache.put('token', resolve.token, 7200);
-            cache.put('is_set', resolve.is_set, 0)
-          }
-        })
+        let data = await request.post('/user/login', {code: code}, token);
+        if (data && data.status === 1) {
+          cache.put('token', data.token, 7200);
+          cache.put('is_set', data.is_set, 0)
+        }
       }
     },
-    async checkCommand(data){
-      if(this.canClick){
-        this.canClick = false;
+    async quitApplet(){
+      if(this.canClick2){
+        this.canClick2 = false
         setTimeout(()=>{
-          this.canClick = true
+          this.canClick2 = true
+        }, 500);
+      } else{
+        return;
+      }
+      let token = await cache.get('token');
+      await request.post('/user/quitApplet', {}, token).then(()=>{
+        cache.clear();
+      });
+    },
+    async checkCommand(data){
+      if(this.canClick1){
+        this.canClick1 = false
+        setTimeout(()=>{
+          this.canClick1 = true
         }, 500);
       } else{
         return;
       }
       let command = await data.mp.detail.value.command?await data.mp.detail.value.command:await data;
-      if (functions.trim(command)&&parseFloat(command).toString() !== "NaN"&&command.length===4&&!isNaN(command)) {
+      if (functions.trim(command)&&parseFloat(command).toString() !== "NaN"&&command.length===4) {
         let token = await cache.get('token');
         if (token) {
-          request.post('/command/checkCommand', {command:base64.encode(sensitivedata.Encrypt(command,token))}, token).then((data)=>{
-            if (data&&data.status===1){
-              let options = functions.getOptions();
-              this.goWhere(options.where,options)
+          await request.post('/command/checkCommand', {command:base64.encode(sensitivedata.Encrypt(command,token))}, token).then((resolve)=>{
+            if (resolve&&resolve.status===1){
+              this.baibai = true
             } else {
               mpvue.showToast({
-                title: data.msg,
+                title: resolve.msg,
                 icon: 'none',
                 duration: 1500,
                 mask: true
               })
             }
           });
-          return true
+          return true;
         } else {
           this.login().then(this.checkCommand(command))
         }
@@ -75,18 +105,6 @@ export default {
         })
       }
     },
-    goWhere(where,options){
-      //拼接url的参数
-      let data = '';
-      for(let key in options){
-        let value = options[key];
-        data += key + '=' + value + '&'
-      }
-      data = data.substring(data.indexOf('&',0), data.length-1);
-      mpvue.redirectTo({
-        url:"../"+where +"/main?can=yes&" + data
-      })
-    }
   }
 }
 </script>
@@ -110,6 +128,16 @@ export default {
       .btn{
         margin-top 100rpx
         width 95%
+        height 112rpx
+        line-height:112rpx;
+        border-radius 34rpx
+        background #005752
+        color #ffffff
+      }
+      .btn-close{
+        width 95%
+        margin 30% auto
+        text-align:center
         height 112rpx
         line-height:112rpx;
         border-radius 34rpx

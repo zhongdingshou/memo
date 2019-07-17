@@ -4,7 +4,13 @@
     "pages/create/main",
     "pages/my/main",
     "pages/detail/main",
-    "pages/checkcommand/main"
+    "pages/checkcommand/main",
+    "pages/command/main",
+    "pages/questions/main",
+    "pages/mail/main",
+    "pages/encryption/main",
+    "pages/abandon/main",
+    "pages/about/main"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -16,7 +22,7 @@
     "color": "#999",
     "backgroundColor": "#ffffff",
     "selectedColor": "#005752",
-    "borderStyle": "white",
+    "borderStyle": "black",
 
     "list": [{
       "text": "首页",

@@ -32,6 +32,7 @@ function remove(k) {
 }
 
 function clear() {
+  mpvue.clearStorage()
   mpvue.clearStorageSync();
 }
 
