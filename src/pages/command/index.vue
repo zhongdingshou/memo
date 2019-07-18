@@ -54,12 +54,12 @@ export default {
     },
     async newCommand(data){
       if(this.canClick){
-        this.canClick = false
+        this.canClick = false;
         setTimeout(()=>{
           this.canClick = true
         }, 500);
       } else{
-        return;
+        return
       }
       let command = await data.mp.detail.value.command?await data.mp.detail.value.command:await data;
       if (functions.trim(command)&&parseFloat(command).toString() !== "NaN"&&command.length===4) {
@@ -75,8 +75,8 @@ export default {
                 icon: 'none',
                 duration: 1500,
                 mask: true
-              });
-            });
+              })
+            })
           } else {
             await mpvue.showToast({
               title: data.msg,
@@ -85,7 +85,7 @@ export default {
               mask: true
             });
           }
-          return true;
+          return true
         } else {
           this.login().then(this.checkCommand(command))
         }

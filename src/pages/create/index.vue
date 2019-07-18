@@ -2,7 +2,7 @@
   <div class="create">
     <div class="content">
       <form class='box' @submit='creatSecret'>
-        <textarea class="describe neirong" name="describe" :value="describe" maxlength="100" auto-focus="true" adjust-position focus="true" placeholder="请输入描述(建议不要出现原词，尽量使用本人知道的相关词，描述用于辅助回忆，100字以内)..."></textarea>
+        <textarea class="describe neirong" name="describe" :value="describe" maxlength="100" auto-focus="true" adjust-position focus="true" placeholder="请输入描述(建议不要出现原词，尽量使用本人知道的相关词，这里的描述是用于辅助回忆的，100字以内)..."></textarea>
         <input class="account neirong" name="account" :value="account" type="text"  placeholder="请输入账号...">
         <input class="password neirong" name="password" :value="password" type="text"  placeholder="请输入密码...">
         <button class="btn" form-type="submit">提交</button>
@@ -77,12 +77,12 @@ export default {
   },
     async creatSecret(e) {
       if(this.canClick){
-        this.canClick = false
+        this.canClick = false;
         setTimeout(()=>{
           this.canClick = true
         }, 500);
       } else{
-        return;
+        return
       }
       let is_set = await cache.get('is_set');
       if (!functions.checkSet(is_set,1)||!functions.checkSet(is_set,2)) {
@@ -90,7 +90,7 @@ export default {
           mpvue.showToast({
             title: "未设置口令、加密套餐无法新建备忘录，请设置",
             icon: 'none',
-            duration: 1000,
+            duration: 1500,
             mask: true
           });
         });
@@ -129,29 +129,29 @@ export default {
                   mpvue.showToast({
                     title: resolve.msg,
                     icon: 'none',
-                    duration: 2000,
+                    duration: 1500,
                     mask: true
-                  })
+                  });
                   if (resolve.status === 1) {
                     mpvue.switchTab({
                       url: '../index/main'
-                    });
+                    })
                   }
-                });
+                })
               } else {
                 mpvue.showToast({
                   title: "所有选项内容不能为空，请检查",
                   icon: 'none',
-                  duration: 2000,
+                  duration: 1500,
                   mask: true
                 })
               }
             } else if (res.cancel) {
-              return false;
+              return false
             }
-            return false;
+            return false
           }
-        });
+        })
       } else {
         if (describe && account && password) {
           request.post('/secret/creatSecret', {
@@ -162,20 +162,20 @@ export default {
             mpvue.showToast({
               title: resolve.msg,
               icon: 'none',
-              duration: 2000,
+              duration: 1500,
               mask: true
             });
             if (resolve.status === 1) {
               mpvue.switchTab({
                 url: '../index/main'
-              });
+              })
             }
-          });
+          })
         } else {
           mpvue.showToast({
             title: "所有选项内容不能为空，请检查",
             icon: 'none',
-            duration: 2000,
+            duration: 1500,
             mask: true
           })
         }

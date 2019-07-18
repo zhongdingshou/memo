@@ -32,7 +32,7 @@ export default {
     }
   },
   onUnload() {
-    this.num=0
+    this.num=0;
     if (this.baibai) {
       this.quitApplet()
     }
@@ -58,26 +58,26 @@ export default {
     },
     async quitApplet(){
       if(this.canClick2){
-        this.canClick2 = false
+        this.canClick2 = false;
         setTimeout(()=>{
           this.canClick2 = true
         }, 500);
       } else{
-        return;
+        return
       }
       let token = await cache.get('token');
       await request.post('/user/quitApplet', {}, token).then(()=>{
-        cache.clear();
+        cache.clear()
       });
     },
     async checkCommand(data){
       if(this.canClick1){
-        this.canClick1 = false
+        this.canClick1 = false;
         setTimeout(()=>{
           this.canClick1 = true
-        }, 500);
+        }, 500)
       } else{
-        return;
+        return
       }
       let command = await data.mp.detail.value.command?await data.mp.detail.value.command:await data;
       if (functions.trim(command)&&parseFloat(command).toString() !== "NaN"&&command.length===4) {
@@ -104,14 +104,14 @@ export default {
                 });
                 return
               } else {
-                cache.remove('can_command');
+                cache.remove('can_command')
               }
             }
           }
           await request.post('/command/checkCommand', {command:base64.encode(sensitivedata.Encrypt(command,token))}, token).then((resolve)=>{
             if (resolve&&resolve.status===1){
               if (cache.get('can_command')==='1') {
-                cache.remove('can_command');
+                cache.remove('can_command')
               }
               this.baibai = true
             } else {
@@ -123,11 +123,11 @@ export default {
                 mask: true
               });
               if (this.num === 3) {
-                cache.put('can_command','1',1800);//30min
+                cache.put('can_command','1',1800)//30min
               }
             }
           });
-          return true;
+          return true
         } else {
           this.login().then(this.checkCommand(command))
         }

@@ -75,17 +75,17 @@ export default {
     },
     async isReset(){
       if(this.canClick2){
-        this.canClick2 = false
+        this.canClick2 = false;
         setTimeout(()=>{
           this.canClick2 = true
-        }, 500);
+        }, 500)
       } else{
-        return;
+        return
       }
       if(functions.checkSet(cache.get('is_set'),3)){
         await mpvue.navigateTo({
           url:"../checkcommand/main?where=questions"
-        });
+        })
       }
     },
     async login(){
@@ -108,28 +108,28 @@ export default {
           for(let key in data.msg) {
             this.id[i] = key;
             if (i===0) {
-              this.question1 = data.msg[key];
+              this.question1 = data.msg[key]
             } else if (i===1) {
-              this.question2 = data.msg[key];
+              this.question2 = data.msg[key]
             } else {
-              this.question3 = data.msg[key];
+              this.question3 = data.msg[key]
             }
-            i++;
+            i++
           }
         }
-        return true;
+        return true
       } else {
         this.login().then(this.getEncrypted())
       }
     },
     async newEncrypted(data){
       if(this.canClick1){
-        this.canClick1 = false
+        this.canClick1 = false;
         setTimeout(()=>{
           this.canClick1 = true
-        }, 500);
+        }, 500)
       } else{
-        return;
+        return
       }
       if (functions.checkSet(cache.get('is_set'),3)) {
         await this.checkEncrypted(data);
@@ -151,10 +151,10 @@ export default {
             duration: 2000,
             mask: true
           });
-          return false;
+          return
         }
         problem[j]= q;
-        answer[j] = w;
+        answer[j] = w
       }
       let token = await cache.get('token');
       if (token) {
@@ -167,17 +167,17 @@ export default {
               icon: 'none',
               duration: 1500,
               mask: true
-            });
-          });
+            })
+          })
         } else {
           await mpvue.showToast({
             title: data.msg,
             icon: 'none',
             duration: 2000,
             mask: true
-          });
+          })
         }
-        return true;
+        return true
       } else {
         this.login().then(this.newEncrypted(data))
       }
@@ -195,9 +195,9 @@ export default {
             duration: 2000,
             mask: true
           });
-          return false;
+          return
         }
-        answer[j] = w;
+        answer[j] = w
       }
       let token = await cache.get('token');
       if (token) {
@@ -213,7 +213,7 @@ export default {
             url:"../command/main?can=yes"
           })
         }
-        return true;
+        return true
       } else {
         this.login().then(this.checkEncrypted(data))
       }

@@ -51,7 +51,7 @@ export default {
     this.iconName = ['口令设置','修改密保','邮箱设置','加密套餐','弃用小程序','关于'];
     this.iconClass = ['icon-command','icon-file-text2','icon-mail','icon-encryption','icon-abandon','icon-file-text2'];
     this.iconType = ['command','questions','mail','encryption','abandon','about'];
-    this.myItems = this.initIconMap();
+    this.myItems = this.initIconMap()
   },
   methods: {
     initIconMap(){
@@ -62,9 +62,9 @@ export default {
         iconMap.class = this.iconClass[i];
         iconMap.name = this.iconName[i];
         iconMap.type = this.iconType[i];
-        arr.push(iconMap);
+        arr.push(iconMap)
       }
-      return arr;
+      return arr
     },
     functionsClick(functionsType){
       if(functions.checkSet(cache.get('is_set'),1)){
@@ -72,14 +72,11 @@ export default {
           mpvue.navigateTo({
             url:"../checkcommand/main?where="+ functionsType
           });
-          return true;
+          return
         }
-      } funlist.achieveFunctions(functionsType);
+      } funlist.achieveFunctions(functionsType)
     }
-
   }
-
-
 }
 </script>
 

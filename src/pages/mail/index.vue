@@ -40,7 +40,7 @@ export default {
       this.alreadySet=false;
       this.isChange = true;
       this.CanNotChange = true;
-      this.newEmail();
+      this.newEmail()
     } else {
       if(functions.checkSet(cache.get('is_set'),4)){
         this.alreadySet=true;
@@ -63,7 +63,7 @@ export default {
     this.isClick = true;
     let interval = this.interval;    // 保存定时器的id
     clearInterval(interval);
-    this.time = '获取验证码';
+    this.time = '获取验证码'
   },
   methods: {
     async successOut(callback) {
@@ -121,23 +121,23 @@ export default {
         mpvue.showToast({
           title: "请输入邮箱",
           icon: 'none',
-          duration: 1000,
+          duration: 1500,
           mask: true
-        });
+        })
       } else if (!reg.test(mail)) {
         mpvue.showToast({
           title: "邮箱格式错误，请检查",
           icon: 'none',
-          duration: 1000,
+          duration: 1500,
           mask: true
-        });
+        })
       } else if (mail.length<=32) {
         if(functions.checkSet(cache.get('is_set'),4)){
           if (mail!==this.email){
             mpvue.navigateTo({
               url:"../checkcommand/main?where=mail&&email=" + mail
             });
-            return true;
+            return
           }
         }
         let token = await cache.get('token');
@@ -153,17 +153,17 @@ export default {
               if(times < 0){
                 this.time = '重新获取';
                 this.isClick = true;
-                clearInterval(this.interval);
+                clearInterval(this.interval)
               }
-            },1000);
+            },1500);
             await mpvue.showToast({
               title: data.msg,
               icon: 'none',
-              duration: 2000,
+              duration: 1500,
               mask: true
-            });
+            })
           }
-          return true;
+          return true
         } else {
           this.login().then(this.newEmail())
         }
@@ -171,7 +171,7 @@ export default {
         mpvue.showToast({
           title: "邮箱长度不能超过32，请更换",
           icon: 'none',
-          duration: 1000,
+          duration: 1500,
           mask: true
         })
       }
@@ -181,9 +181,9 @@ export default {
         this.canClick2 = false;
         setTimeout(()=>{
           this.canClick2 = true
-        }, 500);
+        }, 500)
       } else{
-        return;
+        return
       }
       let verification = await data.mp.detail.value.verification;
       if (verification.length === 6&&!isNaN(verification)) {
@@ -198,8 +198,8 @@ export default {
                   icon: 'none',
                   duration: 1500,
                   mask: true
-                });
-              });
+                })
+              })
             } else if(data.status===2) {
               if (!this.isChange) {
                 mpvue.redirectTo({
@@ -208,7 +208,7 @@ export default {
               }
             }
           });
-          return true;
+          return true
         } else {
           this.login().then(this.checkMail(data))
         }
@@ -216,14 +216,14 @@ export default {
         mpvue.showToast({
           title: "请输入验证码",
           icon: 'none',
-          duration: 1000,
+          duration: 1500,
           mask: true
         })
       } else {
         mpvue.showToast({
           title: "验证码格式错误，请检查",
           icon: 'none',
-          duration: 1000,
+          duration: 1500,
           mask: true
         })
       }

@@ -61,10 +61,23 @@ export default {
       }
     },
     async addThis(id,name){
-      let itemsMap = {id:'',name:''};
-      itemsMap.id = id;
-      itemsMap.name = name;
-      this.checkItem.push(itemsMap);
+      let j = 0;
+      for(let i=0,len=this.checkItem.length;i<len;i++){
+        if (this.checkItem[i].id === id) j++
+      }
+      if (j>=3) {
+        await mpvue.showToast({
+          title: "每种加密方式只能使用三次, 请检查",
+          icon: 'none',
+          duration: 1500,
+          mask: true
+        })
+      } else {
+        let itemsMap = {id:'',name:''};
+        itemsMap.id = id;
+        itemsMap.name = name;
+        this.checkItem.push(itemsMap)
+      }
     },
     async del(index){
       if (index>=0||index<this.checkItem.length)
@@ -92,23 +105,23 @@ export default {
           }
           this.items = arr
         }
-        return true;
+        return true
       } else {
         this.login().then(this.getEncryption())
       }
     },
     async newEncryption(){
       if(this.canClick){
-        this.canClick = false
+        this.canClick = false;
         setTimeout(()=>{
           this.canClick = true
-        }, 500);
+        }, 500)
       } else{
-        return;
+        return
       }
       let combo = ',';
       for (let bb = 0; bb < this.checkItem.length;bb++) {
-        combo = combo + this.checkItem[bb].id + ',';
+        combo = combo + this.checkItem[bb].id + ','
       }
       if (combo===',') {
         await mpvue.showToast({
@@ -119,18 +132,18 @@ export default {
         });
         return
       }
-      else if (functions.getStrLen(combo)>60) {
+      else if (functions.getStrLen(combo) > 61) {
         await mpvue.showToast({
           title: "加密个数太多，最多只允许30个，去掉一些吧",
           icon: 'none',
-          duration: 1500,
+          duration: 2000,
           mask: true
         });
       }
       let token = await cache.get('token');
       if (!token) {
         await this.login();
-        token = await cache.get('token');
+        token = await cache.get('token')
       }
       if(token){
         await request.post('/encryption/newPackage', {package:base64.encode(sensitivedata.Encrypt(combo,token))}, token).then((data)=>{
@@ -140,17 +153,17 @@ export default {
               mpvue.showToast({
                 title: data.msg,
                 icon: 'none',
-                duration: 1500,
+                duration: 2000,
                 mask: true
               });
-            });
+            })
           } else {
             mpvue.showToast({
               title: data.msg,
               icon: 'none',
               duration: 1500,
               mask: true
-            });
+            })
           }
         });
         return true

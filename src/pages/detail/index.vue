@@ -50,18 +50,18 @@
         },
         async delSecret(id){
           if(this.canClick2){
-            this.canClick2 = false
+            this.canClick2 = false;
             setTimeout(()=>{
               this.canClick2 = true
             }, 500);
           } else{
-            return;
+            return
           }
           if (id){
             let token = await cache.get('token');
             if (!token) {
               await this.login();
-              token = await cache.get('token');
+              token = await cache.get('token')
             }
             mpvue.showModal({
               title: '提醒！！！',
@@ -80,12 +80,12 @@
                     if(data.status === 1){
                       mpvue.switchTab({
                         url: '../index/main'
-                      });
+                      })
                     }
                   })
                 }
               }
-            });
+            })
           } else {
             mpvue.showToast({
               title: "请选择需要删除的备忘录",
@@ -97,17 +97,17 @@
         },
         async editSecret(e){
           if(this.canClick1){
-            this.canClick1 = false
+            this.canClick1 = false;
             setTimeout(()=>{
               this.canClick1 = true
-            }, 500);
+            }, 500)
           } else{
-            return;
+            return
           }
           let token = await cache.get('token');
           if (!token) {
             await this.login();
-            token = await cache.get('token');
+            token = await cache.get('token')
           }
           let id = await e.mp.detail.value.id;
           let describe = functions.trim(await e.mp.detail.value.describe);
@@ -139,7 +139,7 @@
                       mpvue.showToast({
                         title: resolve.msg,
                         icon: 'none',
-                        duration: 1000,
+                        duration: 1500,
                         mask: true
                       })
                     })
@@ -147,16 +147,16 @@
                     mpvue.showToast({
                       title: "所有选项内容不能为空，请检查",
                       icon: 'none',
-                      duration: 2000,
+                      duration: 1500,
                       mask: true
                     })
                   }
                 } else if (res.cancel) {
-                  return false;
+                  return false
                 }
-                return false;
+                return false
               }
-            });
+            })
           } else {
             if (describe && account && password) {
               request.post('/secret/editSecret', {
@@ -176,7 +176,7 @@
               mpvue.showToast({
                 title: "所有选项内容不能为空，请检查",
                 icon: 'none',
-                duration: 2000,
+                duration: 1500,
                 mask: true
               })
             }
@@ -186,7 +186,7 @@
           let token = await cache.get('token');
           if (!token) {
             await this.login();
-            token = await cache.get('token');
+            token = await cache.get('token')
           }
           await request.post('/secret/getDetail', {id:id}, token).then((data)=>{
             if (data&&data.status===1){

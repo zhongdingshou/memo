@@ -62,7 +62,7 @@ export default {
   },
   beforeMount() {
     this.operateUserInfo();
-    this.canGetSecret();
+    this.canGetSecret()
   },
   onShow(){
     if(this.canRefresh){
@@ -76,12 +76,12 @@ export default {
 // 下拉刷新
   onPullDownRefresh () {
     if(this.canClick1){
-      this.canClick1 = false
+      this.canClick1 = false;
       setTimeout(()=>{
         this.canClick1 = true
-      }, 500);
+      }, 500)
     } else{
-      return;
+      return
     }
     // 初始化页码
     this.page = 1;
@@ -90,12 +90,12 @@ export default {
   // 上拉加载
   onReachBottom () {
     if(this.canClick2){
-      this.canClick2 = false
+      this.canClick2 = false;
       setTimeout(()=>{
         this.canClick2 = true
-      }, 500);
+      }, 500)
     } else{
-      return;
+      return
     }
     if (this.page >= this.total_page) {
       mpvue.showToast({
@@ -141,18 +141,16 @@ export default {
         })
       }
     },
-
     operateUserInfo(){
       let that = this;
       mpvue.getUserInfo({
         success: (res)=>{
           let useInfo = res.userInfo;//用户信息
           mpvue.setStorageSync('userInfo', useInfo);
-          that.hasData = true;
+          that.hasData = true
         }
-      });
+      })
     },
-
     async searchSacret(data=''){
       let keywords =functions.trim( await data);
       if (keywords){
@@ -181,7 +179,6 @@ export default {
         this.getSecret()
       }
     },
-
     async login(){
       let token = await cache.get('token');
       if (!token) {
@@ -193,14 +190,12 @@ export default {
         }
       }
     },
-
     async getUserInfo(data){
       if (data.mp.detail.rawData){
         this.operateUserInfo();
         this.getSecret()
       }
     },
-
     async getSecret(){
       let token = await cache.get('token');
       if (token) {

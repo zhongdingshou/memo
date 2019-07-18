@@ -46,9 +46,9 @@ export default {
         this.canClick = false;
         setTimeout(()=>{
           this.canClick = true
-        }, 500);
+        }, 500)
       } else{
-        return;
+        return
       }
       let command = await data.mp.detail.value.command?await data.mp.detail.value.command:await data;
       if (functions.trim(command)&&parseFloat(command).toString() !== "NaN"&&command.length===4&&!isNaN(command)) {
@@ -75,14 +75,14 @@ export default {
                 });
                 return
               } else {
-                cache.remove('can_command');
+                cache.remove('can_command')
               }
             }
           }
           request.post('/command/checkCommand', {command:base64.encode(sensitivedata.Encrypt(command,token))}, token).then((data)=>{
             if (data&&data.status===1){
               if (cache.get('can_command')==='1') {
-                cache.remove('can_command');
+                cache.remove('can_command')
               }
               let options = functions.getOptions();
               this.goWhere(options.where,options)
@@ -95,7 +95,7 @@ export default {
                 mask: true
               });
               if (this.num === 3) {
-                cache.put('can_command','1',1800);//30min
+                cache.put('can_command','1',1800)//30min
               }
             }
           });
