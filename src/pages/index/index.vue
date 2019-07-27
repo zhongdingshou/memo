@@ -44,7 +44,7 @@
   import cache from '../../utils/cache.js'
   import login from '../../utils/login.js'
   import request from '../../utils/request.js'
-  import sensitivedata from '../../utils/sensitivedata.js'
+  import { Debounce } from '../../utils/public'
 export default {
   data() {
     return {
@@ -65,12 +65,14 @@ export default {
     this.canGetSecret()
   },
   onShow(){
-    if(this.canRefresh){
-      this.canRefresh = false;
-      setTimeout(()=>{
-        this.canRefresh = true
-      }, 7000);
-      this.getSecret()
+    if(getCurrentPages()[0].__displayReporter.showReferpagepath.match('detail')||getCurrentPages()[0].__displayReporter.showReferpagepath.match('create')){
+      if(this.canRefresh){
+        this.canRefresh = false;
+        setTimeout(()=>{
+          this.canRefresh = true
+        }, 7000);
+        this.getSecret()
+      }
     }
   },
 // 下拉刷新
@@ -155,25 +157,23 @@ export default {
       let keywords =functions.trim( await data);
       if (keywords){
         let token = await cache.get('token');
-        if (token) {
-          let data = await request.post('/secret/searchSecret', {keywords:keywords}, token)
-          if (data&&data.status===1)
-            this.items =  data.data;
-          else{
-            this.items =  {};
-            mpvue.showToast({
-              title: data.msg,
-              icon: 'none',
-              duration: 1500,
-              mask:true
-            })
-          }
-          this.is_search = true;
-          return true
-        } else {
+        if (!token) {
           await this.login();
-          this.searchSacret()
+          token = await cache.get('token')
         }
+        let _data = await request.post('/secret/searchSecret', {keywords:keywords}, token)
+        if (_data&&_data.status===1)
+          this.items =  _data.data;
+        else{
+          this.items =  {};
+          mpvue.showToast({
+            title: _data.msg,
+            icon: 'none',
+            duration: 1500,
+            mask:true
+          })
+        }
+        this.is_search = true;
       } else {
         this.page = 1;
         this.getSecret()
@@ -183,11 +183,12 @@ export default {
       let token = await cache.get('token');
       if (!token) {
         let code = await login.getCode();
-        let data = await request.post('/user/login', {code: code}, token);
-        if (data && data.status === 1) {
-          cache.put('token', data.token, 7200);
-          cache.put('is_set', data.is_set, 0)
-        }
+        await request.post('/user/login', {code: code}, token).then((resolve)=>{
+          if (resolve && resolve.status === 1) {
+            cache.put('token', resolve.token, 7200);
+            cache.put('is_set', resolve.is_set, 0)
+          }
+        })
       }
     },
     async getUserInfo(data){
@@ -198,35 +199,33 @@ export default {
     },
     async getSecret(){
       let token = await cache.get('token');
-      if (token) {
-        let data = await request.get('/secret/getSecret',{page:this.page},token);
-        mpvue.stopPullDownRefresh();
-        this.is_search = false;
-        if (data&&data.status===1){
-          if (this.page === 1) {
-            // 数据
-            this.items = data.data;
-          } else {
-            // 数据追加
-            for (let i = 0;i<data.data.length;i++){
-              this.items.push(data.data[i])
-            }
-          }
-          // 总页数
-          this.total_page = data.total_page
-        } else{
-          this.items =  {};
-          mpvue.showToast({
-            title: data.msg,
-            icon: 'none',
-            duration: 1500,
-            mask:true
-          })
-        }
-        return true
-      } else {
+      if (!token) {
         await this.login();
-        this.getSecret()
+        token = await cache.get('token')
+      }
+      let data = await request.get('/secret/getSecret',{page:this.page},token);
+      mpvue.stopPullDownRefresh();
+      this.is_search = false;
+      if (data&&data.status===1){
+        if (this.page === 1) {
+          // 数据
+          this.items = data.data;
+        } else {
+          // 数据追加
+          for (let i = 0;i<data.data.length;i++){
+            this.items.push(data.data[i])
+          }
+        }
+        // 总页数
+        this.total_page = data.total_page
+      } else{
+        this.items =  {};
+        mpvue.showToast({
+          title: data.msg,
+          icon: 'none',
+          duration: 1500,
+          mask:true
+        })
       }
     },
     showInput() {
@@ -238,11 +237,11 @@ export default {
     },
     clearInput() {
       this.inputVal = '';
-      this.searchSacret()
+      Debounce(this.searchSacret(),500)
     },
     inputTyping(e) {
       this.inputVal = e.mp.detail.value;
-      this.searchSacret(e.mp.detail.value)
+      Debounce(this.searchSacret(e.mp.detail.value),500)
     }
   }
 }

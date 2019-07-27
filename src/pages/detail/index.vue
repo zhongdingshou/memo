@@ -31,6 +31,14 @@
           canClick2:true
         }
       },
+      onUnload() {
+        this.id=0;
+        this.describe='';
+        this.account='';
+        this.password='';
+        this.canClick1=true;
+        this.canClick2=true
+      },
       beforeMount() {
         let options = functions.getOptions();
         this.getDetail(options.id)

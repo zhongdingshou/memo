@@ -7,8 +7,8 @@
       <label><input class="text" name="id2" hidden type="text" :value="id[1]" ></label>
       <label><input class="text" :disabled="alreadySet" name="question2" type="text"  :value="question2"  placeholder="问题2" maxlength="100" ></label>
       <label><input class="text" name="answer2" type="text"  :value="answer2"  placeholder="答案2" maxlength="100"  ></label>
-      <label><input class="text" :disabled="alreadySet" name="id3" hidden type="text" :value="id[2]" ></label>
-      <label><input class="text" name="question3" type="text"  :value="question3"  placeholder="问题3" maxlength="100"  ></label>
+      <label><input class="text" name="id3" hidden type="text" :value="id[2]" ></label>
+      <label><input class="text" :disabled="alreadySet" name="question3" type="text"  :value="question3"  placeholder="问题3" maxlength="100"  ></label>
       <label><input class="text" name="answer3" type="text"  :value="answer3"  placeholder="答案3" maxlength="100" ></label>
       <button class="btn" :hidden="alreadySet" data-eventid="2" :disabled="alreadySet" form-type="submit">设置</button>
       <button class="change-btn" :hidden="!alreadySet" data-eventid="1" form-type="submit">修改口令</button>
@@ -38,6 +38,13 @@ export default {
     }
   },
   onUnload() {
+    this.id.splice(0);
+    this.question1 = '';
+    this.question2 = '';
+    this.question3 = '';
+    this.alreadySet=false;
+    this.canClick1=true;
+    this.canClick2=true;
     if (!functions.checkSet(cache.get('is_set'),3)&&functions.getOptions().can==='yes') {
       request.post('/encrypted/newEncrypted', {problem:'',answer:''}, cache.get('token'));
       mpvue.switchTab({
@@ -63,6 +70,8 @@ export default {
   onShow(){
     if(functions.checkSet(cache.get('is_set'),3)){
       this.alreadySet=true
+    } else {
+      this.alreadySet=false
     }
   },
   methods: {
@@ -101,25 +110,24 @@ export default {
     },
     async getEncrypted(){
       let token = await cache.get('token');
-      if(token){
-        let data = await request.get('/encrypted/getEncrypted', {}, token);
-        if (data.status===1) {
-          let i = 0;
-          for(let key in data.msg) {
-            this.id[i] = key;
-            if (i===0) {
-              this.question1 = data.msg[key]
-            } else if (i===1) {
-              this.question2 = data.msg[key]
-            } else {
-              this.question3 = data.msg[key]
-            }
-            i++
+      if (!token) {
+        await this.login();
+        token = await cache.get('token')
+      }
+      let data = await request.get('/encrypted/getEncrypted', {}, token);
+      if (data.status===1) {
+        let i = 0;
+        for(let key in data.msg) {
+          this.id[i] = key;
+          if (i===0) {
+            this.question1 = data.msg[key]
+          } else if (i===1) {
+            this.question2 = data.msg[key]
+          } else {
+            this.question3 = data.msg[key]
           }
+          i++
         }
-        return true
-      } else {
-        this.login().then(this.getEncrypted())
       }
     },
     async newEncrypted(data){
@@ -157,29 +165,28 @@ export default {
         answer[j] = w
       }
       let token = await cache.get('token');
-      if (token) {
-        let data = await request.post('/encrypted/newEncrypted', {problem:problem,answer:answer}, token);
-        if (data&&data.status===1){
-          await cache.put('is_set',functions.addSet(cache.get('is_set'),3),0);
-          this.successOut(()=>{
-            mpvue.showToast({
-              title: data.msg,
-              icon: 'none',
-              duration: 1500,
-              mask: true
-            })
-          })
-        } else {
-          await mpvue.showToast({
-            title: data.msg,
+      if (!token) {
+        await this.login();
+        token = await cache.get('token')
+      }
+      let _data = await request.post('/encrypted/newEncrypted', {problem:problem,answer:answer}, token);
+      if (_data&&_data.status===1){
+        await cache.put('is_set',functions.addSet(cache.get('is_set'),3),0);
+        this.successOut(()=>{
+          mpvue.showToast({
+            title: _data.msg,
             icon: 'none',
-            duration: 2000,
+            duration: 1500,
             mask: true
           })
-        }
-        return true
+        })
       } else {
-        this.login().then(this.newEncrypted(data))
+        await mpvue.showToast({
+          title: _data.msg,
+          icon: 'none',
+          duration: 2000,
+          mask: true
+        })
       }
     },
     async checkEncrypted(data){
@@ -200,22 +207,21 @@ export default {
         answer[j] = w
       }
       let token = await cache.get('token');
-      if (token) {
-        let data = await request.post('/encrypted/checkEncrypted', {answer:answer}, token);
-        await mpvue.showToast({
-          title: data.msg,
-          icon: 'none',
-          duration: 2000,
-          mask: true
-        });
-        if (data&&data.status===1){
-          await mpvue.redirectTo({
-            url:"../command/main?can=yes"
-          })
-        }
-        return true
-      } else {
-        this.login().then(this.checkEncrypted(data))
+      if (!token) {
+        await this.login();
+        token = await cache.get('token')
+      }
+      let _data = await request.post('/encrypted/checkEncrypted', {answer:answer}, token);
+      await mpvue.showToast({
+        title: _data.msg,
+        icon: 'none',
+        duration: 2000,
+        mask: true
+      });
+      if (_data&&_data.status===1){
+        await mpvue.redirectTo({
+          url:"../command/main?can=yes"
+        })
       }
     }
   }

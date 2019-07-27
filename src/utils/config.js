@@ -6,4 +6,4 @@ module.exports = {
   URL: URL,
   key:key,
   iv:iv
-}
+};

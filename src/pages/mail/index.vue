@@ -104,14 +104,13 @@ export default {
     },
     async getEmail(){
       let token = await cache.get('token');
-      if(token){
-        let data = await request.get('/email/getEmail', {}, token);
-        if (data.status===1) {
-          this.email = this.mail = data.msg
-        }
-        return true
-      } else {
-        this.login().then(this.getEmail())
+      if (!token) {
+        await this.login();
+        token = await cache.get('token')
+      }
+      let data = await request.get('/email/getEmail', {}, token);
+      if (data.status===1) {
+        this.email = this.mail = data.msg
       }
     },
     async newEmail(){
@@ -141,31 +140,30 @@ export default {
           }
         }
         let token = await cache.get('token');
-        if (token) {
-          let data = await request.post('/email/newEmail', {email:mail}, token);
-          if(data){
-            this.isClick = false;
-            let times = 60; // 用于倒计时
+        if (!token) {
+          await this.login();
+          token = await cache.get('token')
+        }
+        let data = await request.post('/email/newEmail', {email:mail}, token);
+        if(data){
+          this.isClick = false;
+          let times = 60; // 用于倒计时
+          this.time = times+'s';
+          this.interval = setInterval(() =>{
+            times--;
             this.time = times+'s';
-            this.interval = setInterval(() =>{
-              times--;
-              this.time = times+'s';
-              if(times < 0){
-                this.time = '重新获取';
-                this.isClick = true;
-                clearInterval(this.interval)
-              }
-            },1500);
-            await mpvue.showToast({
-              title: data.msg,
-              icon: 'none',
-              duration: 1500,
-              mask: true
-            })
-          }
-          return true
-        } else {
-          this.login().then(this.newEmail())
+            if(times < 0){
+              this.time = '重新获取';
+              this.isClick = true;
+              clearInterval(this.interval)
+            }
+          },1500);
+          await mpvue.showToast({
+            title: data.msg,
+            icon: 'none',
+            duration: 1500,
+            mask: true
+          })
         }
       } else {
         mpvue.showToast({
@@ -188,30 +186,36 @@ export default {
       let verification = await data.mp.detail.value.verification;
       if (verification.length === 6&&!isNaN(verification)) {
         let token = await cache.get('token');
-        if (token) {
-          await request.post('/email/checkEmail', {verify:base64.encode(sensitivedata.Encrypt(verification,token))}, token).then((data)=>{
-            if (data&&data.status===1){
-              cache.put('is_set',functions.addSet(cache.get('is_set'),4),0);
-              this.successOut(()=>{
-                mpvue.showToast({
-                  title: data.msg,
-                  icon: 'none',
-                  duration: 1500,
-                  mask: true
-                })
-              })
-            } else if(data.status===2) {
-              if (!this.isChange) {
-                mpvue.redirectTo({
-                  url:"../command/main?can=yes"
-                })
-              }
-            }
-          });
-          return true
-        } else {
-          this.login().then(this.checkMail(data))
+        if (!token) {
+          await this.login();
+          token = await cache.get('token')
         }
+        await request.post('/email/checkEmail', {verify:base64.encode(sensitivedata.Encrypt(verification,token))}, token).then((data)=>{
+          if (data&&data.status===1){
+            cache.put('is_set',functions.addSet(cache.get('is_set'),4),0);
+            this.successOut(()=>{
+              mpvue.showToast({
+                title: data.msg,
+                icon: 'none',
+                duration: 1500,
+                mask: true
+              })
+            })
+          } else if(data.status===2) {
+            if (!this.isChange) {
+              mpvue.redirectTo({
+                url:"../command/main?can=yes"
+              })
+            }
+          } else {
+            mpvue.showToast({
+              title: data.msg,
+              icon: 'none',
+              duration: 1500,
+              mask: true
+            })
+          }
+        })
       } else if (!functions.trim(verification)) {
         mpvue.showToast({
           title: "请输入验证码",

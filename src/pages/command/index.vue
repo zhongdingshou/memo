@@ -45,11 +45,12 @@ export default {
       let token = await cache.get('token');
       if (!token) {
         let code = await login.getCode();
-        let data = await request.post('/user/login', {code: code}, token);
-        if (data && data.status === 1) {
-          cache.put('token', data.token, 7200);
-          cache.put('is_set', data.is_set, 0)
-        }
+        await request.post('/user/login', {code: code}, token).then((resolve)=>{
+          if (resolve && resolve.status === 1) {
+            cache.put('token', resolve.token, 7200);
+            cache.put('is_set', resolve.is_set, 0)
+          }
+        })
       }
     },
     async newCommand(data){
@@ -64,30 +65,29 @@ export default {
       let command = await data.mp.detail.value.command?await data.mp.detail.value.command:await data;
       if (functions.trim(command)&&parseFloat(command).toString() !== "NaN"&&command.length===4) {
         let token = await cache.get('token');
-        if (token) {
-          let data = await request.post('/command/newCommand', {command:base64.encode(sensitivedata.Encrypt(command,token))}, token);
-          if (data&&data.status===1){
-            await cache.remove('can_command');
-            await cache.put('is_set',functions.addSet(cache.get('is_set'),1),0);
-            this.successOut(()=>{
-              mpvue.showToast({
-                title: data.msg,
-                icon: 'none',
-                duration: 1500,
-                mask: true
-              })
-            })
-          } else {
-            await mpvue.showToast({
+        if (!token) {
+          await this.login();
+          token = await cache.get('token')
+        }
+        let data = await request.post('/command/newCommand', {command:base64.encode(sensitivedata.Encrypt(command,token))}, token);
+        if (data&&data.status===1){
+          await cache.remove('can_command');
+          await cache.put('is_set',functions.addSet(cache.get('is_set'),1),0);
+          this.successOut(()=>{
+            mpvue.showToast({
               title: data.msg,
               icon: 'none',
               duration: 1500,
               mask: true
-            });
-          }
-          return true
+            })
+          })
         } else {
-          this.login().then(this.checkCommand(command))
+          await mpvue.showToast({
+            title: data.msg,
+            icon: 'none',
+            duration: 1500,
+            mask: true
+          });
         }
       } else {
         mpvue.showToast({

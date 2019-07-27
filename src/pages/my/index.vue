@@ -108,10 +108,7 @@ export default {
       background: #999
       .weui-cells
         margin-top: 0
-        .weui-cell:hover{
-          background: #EFEFF4
-        }
-        .weui-cell  
+        .weui-cell
           .icon
             width: 16px
             height: 16px

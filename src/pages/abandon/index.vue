@@ -82,55 +82,54 @@ export default {
       let command = await data.mp.detail.value.command?await data.mp.detail.value.command:await data;
       if (functions.trim(command)&&parseFloat(command).toString() !== "NaN"&&command.length===4) {
         let token = await cache.get('token');
-        if (token) {
-          if (this.num>2) {
-            mpvue.showToast({
-              title: "无法验证，请等待时间 "+index.s_to_hs(cache.get('can_command_deadtime') - (Date.parse(new Date())/1000))+" 后再尝试",
-              icon: 'none',
-              duration: 3000,
-              mask: true
-            });
-            return
-          } else {
-            if(cache.get('can_command')==='1'){
-              let timestamp = Date.parse(new Date())/1000;//当前时间
-              let can_command = await cache.get('can_command_deadtime');//限定时间
-              if (can_command>timestamp) {
-                mpvue.showToast({
-                  title: "无法验证，请等待时间 "+index.s_to_hs(can_command - timestamp)+" 后再尝试",
-                  icon: 'none',
-                  duration: 3000,
-                  mask: true
-                });
-                return
-              } else {
-                cache.remove('can_command')
-              }
-            }
-          }
-          await request.post('/command/checkCommand', {command:base64.encode(sensitivedata.Encrypt(command,token))}, token).then((resolve)=>{
-            if (resolve&&resolve.status===1){
-              if (cache.get('can_command')==='1') {
-                cache.remove('can_command')
-              }
-              this.baibai = true
-            } else {
-              this.num++;
+        if (!token) {
+          await this.login();
+          token = await cache.get('token')
+        }
+        if (this.num>2) {
+          mpvue.showToast({
+            title: "无法验证，请等待时间 "+index.s_to_hs(cache.get('can_command_deadtime') - (Date.parse(new Date())/1000))+" 后再尝试",
+            icon: 'none',
+            duration: 3000,
+            mask: true
+          });
+          return
+        } else {
+          if(cache.get('can_command')==='1'){
+            let timestamp = Date.parse(new Date())/1000;//当前时间
+            let can_command = await cache.get('can_command_deadtime');//限定时间
+            if (can_command>timestamp) {
               mpvue.showToast({
-                title: resolve.msg+"，还有 "+(3-this.num)+" 次机会",
+                title: "无法验证，请等待时间 "+index.s_to_hs(can_command - timestamp)+" 后再尝试",
                 icon: 'none',
-                duration: 1500,
+                duration: 3000,
                 mask: true
               });
-              if (this.num === 3) {
-                cache.put('can_command','1',1800)//30min
-              }
+              return
+            } else {
+              cache.remove('can_command')
             }
-          });
-          return true
-        } else {
-          this.login().then(this.checkCommand(command))
+          }
         }
+        await request.post('/command/checkCommand', {command:base64.encode(sensitivedata.Encrypt(command,token))}, token).then((resolve)=>{
+          if (resolve&&resolve.status===1){
+            if (cache.get('can_command')==='1') {
+              cache.remove('can_command')
+            }
+            this.baibai = true
+          } else {
+            this.num++;
+            mpvue.showToast({
+              title: resolve.msg+"，还有 "+(3-this.num)+" 次机会",
+              icon: 'none',
+              duration: 1500,
+              mask: true
+            });
+            if (this.num === 3) {
+              cache.put('can_command','1',1800)//30min
+            }
+          }
+        })
       } else {
         mpvue.showToast({
           title: "口令为空、长度不为4或者不是数字，请检查",

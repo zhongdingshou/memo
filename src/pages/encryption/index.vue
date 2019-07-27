@@ -61,13 +61,22 @@ export default {
       }
     },
     async addThis(id,name){
+      if (this.checkItem.length >= 9||this.checkItem.length >= Math.floor(3*this.items.length/2)) {
+        await mpvue.showToast({
+          title: "加密个数太多，最多只允许"+Math.floor(3*this.items.length/2)+"个",
+          icon: 'none',
+          duration: 1000,
+          mask: true
+        });
+        return
+      }
       let j = 0;
       for(let i=0,len=this.checkItem.length;i<len;i++){
         if (this.checkItem[i].id === id) j++
       }
-      if (j>=3) {
+      if (j>=2) {
         await mpvue.showToast({
-          title: "每种加密方式只能使用三次, 请检查",
+          title: "每种加密方式只能使用一次, 请检查",
           icon: 'none',
           duration: 1500,
           mask: true
@@ -93,21 +102,20 @@ export default {
     },
     async getEncryption(){
       let token = await cache.get('token');
-      if(token){
-        let data = await request.get('/encryption/getEncryption', {}, token);
-        if (data.status===1) {
-          let arr = [];
-          for(let key in data.msg) {
-            let itemsMap = {id:'',name:''};
-            itemsMap.id = key;
-            itemsMap.name = data.msg[key];
-            arr.push(itemsMap);
-          }
-          this.items = arr
+      if (!token) {
+        await this.login();
+        token = await cache.get('token')
+      }
+      let data = await request.get('/encryption/getEncryption', {}, token);
+      if (data.status===1) {
+        let arr = [];
+        for(let key in data.msg) {
+          let itemsMap = {id:'',name:''};
+          itemsMap.id = key;
+          itemsMap.name = data.msg[key];
+          arr.push(itemsMap);
         }
-        return true
-      } else {
-        this.login().then(this.getEncryption())
+        this.items = arr
       }
     },
     async newEncryption(){
@@ -132,44 +140,32 @@ export default {
         });
         return
       }
-      else if (functions.getStrLen(combo) > 61) {
-        await mpvue.showToast({
-          title: "加密个数太多，最多只允许30个，去掉一些吧",
-          icon: 'none',
-          duration: 2000,
-          mask: true
-        });
-      }
       let token = await cache.get('token');
       if (!token) {
         await this.login();
         token = await cache.get('token')
       }
-      if(token){
-        await request.post('/encryption/newPackage', {package:base64.encode(sensitivedata.Encrypt(combo,token))}, token).then((data)=>{
-          if (data&&data.status===1){
-            cache.put('is_set',functions.addSet(cache.get('is_set'),2),0);
-            this.successOut(()=>{
-              mpvue.showToast({
-                title: data.msg,
-                icon: 'none',
-                duration: 2000,
-                mask: true
-              });
-            })
-          } else {
+      await request.post('/encryption/newPackage', {package:base64.encode(sensitivedata.Encrypt(combo,token))}, token).then((data)=>{
+        if (data&&data.status===1){
+          cache.put('is_set',functions.addSet(cache.get('is_set'),2),0);
+          this.successOut(()=>{
             mpvue.showToast({
               title: data.msg,
               icon: 'none',
-              duration: 1500,
+              duration: 2000,
               mask: true
-            })
-          }
-        });
-        return true
-      } else {
-        this.login().then(this.newEncryption())
-      }
+            });
+          })
+        } else {
+          this.checkItem = [];
+          mpvue.showToast({
+            title: data.msg,
+            icon: 'none',
+            duration: 1500,
+            mask: true
+          })
+        }
+      })
     }
   }
 }

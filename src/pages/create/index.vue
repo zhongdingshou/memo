@@ -2,7 +2,7 @@
   <div class="create">
     <div class="content">
       <form class='box' @submit='creatSecret'>
-        <textarea class="describe neirong" name="describe" :value="describe" maxlength="100" auto-focus="true" adjust-position focus="true" placeholder="请输入描述(建议不要出现原词，尽量使用本人知道的相关词，这里的描述是用于辅助回忆的，100字以内)..."></textarea>
+        <textarea class="describe neirong" name="describe" :value="describe" maxlength="100" auto-focus="true" adjust-position focus="true" placeholder="请输入描述(建议不要出现原词，尽量使用本人知道的相关词，这里的描述是帮助你回忆的，100字以内)..."></textarea>
         <input class="account neirong" name="account" :value="account" type="text"  placeholder="请输入账号...">
         <input class="password neirong" name="password" :value="password" type="text"  placeholder="请输入密码...">
         <button class="btn" form-type="submit">提交</button>
