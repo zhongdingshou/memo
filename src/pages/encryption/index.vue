@@ -61,9 +61,9 @@ export default {
       }
     },
     async addThis(id,name){
-      if (this.checkItem.length >= 9||this.checkItem.length >= Math.floor(3*this.items.length/2)) {
+      if (this.checkItem.length >= 9||this.checkItem.length >= Math.floor(3*this.items.length/4)) {
         await mpvue.showToast({
-          title: "加密个数太多，最多只允许"+Math.floor(3*this.items.length/2)+"个",
+          title: "加密个数太多，最多只允许"+Math.floor(3*this.items.length/4)+"个",
           icon: 'none',
           duration: 1000,
           mask: true
@@ -76,7 +76,7 @@ export default {
       }
       if (j>=2) {
         await mpvue.showToast({
-          title: "每种加密方式只能使用一次, 请检查",
+          title: "每种加密方式只能使用 2 次, 请检查",
           icon: 'none',
           duration: 1500,
           mask: true
