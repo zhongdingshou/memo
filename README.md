@@ -1,5 +1,7 @@
 # Memoapplet
 
+> A project that use mpvue
+
 # Build Setup
 ```
 # install dependencies
