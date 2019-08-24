@@ -2,7 +2,7 @@
 
 > A project that use mpvue
 
-# Build Setup
+## Build Setup
 ```
 # install dependencies
 npm install
@@ -12,6 +12,6 @@ npm run dev
 
 ```
 
-# Open 微信web开发者工具
+## Open 微信web开发者工具
 
 ### 选择项目文件夹，查看效果
